@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  PENDING
+  ROUTING
+  BUILDING
+  SUBMITTED
+  CONFIRMED
+  FAILED
+}
+
+enum OrderType {
+  MARKET
+}
+
+model order {
+  id String @id @default(uuid())
+
+  userId   String
+  tokenIn  String
+  tokenOut String
+  amountIn Float
+
+  status OrderStatus @default(PENDING)
+
+  orderType OrderType @default(MARKET)
+
+  selectedDex   String?
+  expectedPrice Float?
+  executedPrice Float?
+
+  txHash        String?
+  retries       Int     @default(0)
+  failureReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
